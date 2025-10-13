@@ -21,6 +21,7 @@ import DiagnosticQuiz from "./pages/DiagnosticQuiz";
 import QuizResults from "./pages/QuizResults";
 import Auth from "./pages/Auth";
 import AdminPanel from "./pages/AdminPanel";
+import OnlineClasses from "./pages/OnlineClasses";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/online-classes" element={<OnlineClasses />} />
               {/* New Routes */}
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/contact" element={<Contact />} />

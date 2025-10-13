@@ -48,6 +48,12 @@ const Navbar = () => {
               Home
             </Link>
             <Link
+              to="/online-classes"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
+              Online Classes
+            </Link>
+            <Link
               to="/tutors"
               className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
@@ -114,6 +120,13 @@ const Navbar = () => {
                       className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                     >
                       Home
+                    </Link>
+                    <Link
+                      to="/online-classes"
+                      onClick={() => setIsOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      Online Classes
                     </Link>
                     <Link
                       to="/tutors"
