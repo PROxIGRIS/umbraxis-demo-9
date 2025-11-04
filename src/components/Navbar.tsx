@@ -59,17 +59,17 @@ const Navbar = () => {
             >
               Our Tutors
             </Link>
+            <Link
+              to="/about"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
+              About
+            </Link>
             <a
               href="#services"
               className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
               Services
-            </a>
-            <a
-              href="#about"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              About
             </a>
           </div>
 
@@ -135,19 +135,19 @@ const Navbar = () => {
                     >
                       Our Tutors
                     </Link>
+                    <Link
+                      to="/about"
+                      onClick={() => setIsOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      About
+                    </Link>
                     <a
                       href="#services"
                       onClick={() => setIsOpen(false)}
                       className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                     >
                       Services
-                    </a>
-                    <a
-                      href="#about"
-                      onClick={() => setIsOpen(false)}
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                    >
-                      About
                     </a>
                     {isAdmin && (
                       <Link
