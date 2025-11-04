@@ -169,7 +169,7 @@ const AboutV2: React.FC = () => {
             </div>
 
             <div className="mt-6 p-6 rounded-2xl bg-background/60 border border-primary/10 shadow-md space-y-4">
-              <h3 className="text-lg font-bold">Dynamic AI Quiz (Placeholder)</h3>
+              <h3 className="text-lg font-bold">Dynamic AI Quiz — Discover Your Personalized Learning Plan</h3>
               <p className="text-sm text-foreground/85">Our AI quiz revolutionizes assessment. No static questions — every quiz is uniquely generated based on subject, level, and performance history. Just 8 questions reveal your strengths, weaknesses, and optimal 90-day plan.</p>
 
               <ul className="list-disc pl-5 text-sm space-y-2 text-foreground/85">
@@ -183,7 +183,7 @@ const AboutV2: React.FC = () => {
               <p className="text-sm text-primary font-semibold">Why it matters</p>
               <p className="text-sm text-foreground/85">Our AI quiz ensures every assessment feels fresh and insightful. Students gain immediate clarity — what to fix, how to learn, and who can guide them. It’s faster, smarter, and more adaptive than any static test.</p>
 
-              <p className="mt-4 text-xs text-muted-foreground">Disclaimer: All details provided here are placeholders for presentation only.</p>
+              <p className="mt-4 text-xs text-muted-foreground">All features shown are part of the live Umbraxis AI learning system.</p>
             </div>
           </div>
         </div>
