@@ -495,7 +495,7 @@ const AboutV3: React.FC = () => {
                   loop
                   playsInline
                 >
-                  <source src="/videos/tution-intro.mp4" type="video/mp4" />
+                  <source src="/videos/New Project 23 [3C86411].mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
 
