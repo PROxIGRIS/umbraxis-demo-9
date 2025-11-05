@@ -4,19 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Volume2, VolumeX, Sparkles, Brain } from "lucide-react";
 import Lottie from "lottie-react";
 import { Link } from "react-router-dom";
-import { useRive, useStateMachineInput } from "@rive-app/react-canvas";
 
 const Hero = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Rive animation setup - using a community mascot animation
-  const { RiveComponent, rive } = useRive({
-    src: "https://public.rive.app/community/runtime-files/2063-4080-avatar-pack-use-case.riv",
-    stateMachines: "State Machine 1",
-    autoplay: true,
-  });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -93,7 +85,7 @@ const Hero = () => {
         }}
       />
 
-      {/* Animated decorative elements - Lottie */}
+      {/* Animated decorative elements */}
       <div className="absolute top-20 left-10 w-40 h-40 opacity-30 pointer-events-none animate-pulse">
         <Lottie animationData={spiralAnimation} loop />
       </div>
@@ -102,31 +94,6 @@ const Hero = () => {
       </div>
       <div className="absolute top-1/2 left-1/4 w-32 h-32 opacity-20 pointer-events-none animate-bounce">
         <Lottie animationData={spiralAnimation} loop />
-      </div>
-
-      {/* Interactive Rive mascot - top right corner */}
-      <div 
-        className="absolute top-8 right-8 w-48 h-48 md:w-64 md:h-64 cursor-pointer z-20 hover:scale-110 transition-transform duration-300"
-        onClick={() => {
-          if (rive) {
-            rive.play();
-          }
-        }}
-        onMouseEnter={() => {
-          if (rive) {
-            rive.play();
-          }
-        }}
-      >
-        <div className="relative w-full h-full rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm p-4 border-2 border-primary/20 hover:border-primary/40 transition-all shadow-lg hover:shadow-primary/20">
-          <RiveComponent className="w-full h-full" />
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap">
-            <Badge variant="secondary" className="gap-1 shadow-md animate-bounce">
-              <Sparkles className="w-3 h-3" />
-              Click me!
-            </Badge>
-          </div>
-        </div>
       </div>
 
       <div className="container mx-auto px-6 lg:px-16 py-24">

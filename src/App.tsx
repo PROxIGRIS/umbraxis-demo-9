@@ -22,7 +22,7 @@ import QuizResults from "./pages/QuizResults";
 import Auth from "./pages/Auth";
 import AdminPanel from "./pages/AdminPanel";
 import OnlineClasses from "./pages/OnlineClasses";
-import About from "./pages/About";
+import AboutV3 from "./components/AboutV3";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +45,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/start-trial" element={<StartTrial />} />
               <Route path="/tutors" element={<MeetTutors />} />
-              <Route path="/about" element={<About />} />
+              <Route path="/about" element={<AboutV3 />} />
               {/* Subject Routes */}
               <Route path="/mathematics" element={<Mathematics />} />
               <Route path="/science" element={<Science />} />
