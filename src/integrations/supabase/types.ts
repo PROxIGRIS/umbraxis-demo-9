@@ -98,6 +98,80 @@ export type Database = {
           },
         ]
       }
+      driver_locations: {
+        Row: {
+          created_at: string | null
+          driver_id: string | null
+          id: string
+          latitude: number
+          longitude: number
+          timestamp: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          driver_id?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          timestamp?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          driver_id?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_locations_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drivers: {
+        Row: {
+          active: boolean | null
+          assigned_route: Json | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          password_hash: string
+          phone: string | null
+          serial_number: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          assigned_route?: Json | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          password_hash: string
+          phone?: string | null
+          serial_number: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          assigned_route?: Json | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          password_hash?: string
+          phone?: string | null
+          serial_number?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       online_classes: {
         Row: {
           created_at: string | null
