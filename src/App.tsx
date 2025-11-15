@@ -23,6 +23,9 @@ import Auth from "./pages/Auth";
 import AdminPanel from "./pages/AdminPanel";
 import OnlineClasses from "./pages/OnlineClasses";
 import AboutV3 from "./components/AboutV3";
+import Admin from "./pages/Admin";
+import Driver from "./pages/Driver";
+import Tracking from "./pages/Tracking";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,10 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path="/online-classes" element={<OnlineClasses />} />
+              {/* Tracking System Routes */}
+              <Route path="/admin-tracking" element={<Admin />} />
+              <Route path="/driver" element={<Driver />} />
+              <Route path="/tracking/:driverId" element={<Tracking />} />
               {/* New Routes */}
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/contact" element={<Contact />} />
