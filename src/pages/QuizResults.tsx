@@ -12,6 +12,11 @@ import html2canvas from "html2canvas";
 import { allTutors } from "@/data/tutors";
 import confetti from "canvas-confetti";
 import { ShareResults } from "@/components/ShareResults";
+import { useGamification } from "@/hooks/useGamification";
+import { LevelUpModal } from "@/components/gamification/LevelUpModal";
+import { XPBar } from "@/components/gamification/XPBar";
+import { LevelDisplay } from "@/components/gamification/LevelDisplay";
+import { Theme } from "@/types/gamification";
 import { 
   Brain, 
   TrendingUp, 
@@ -99,6 +104,8 @@ const QuizResults = () => {
   const [achievementsUnlocked, setAchievementsUnlocked] = useState<string[]>([]);
   const [showAchievements, setShowAchievements] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+  const [levelUpData, setLevelUpData] = useState<{ newLevel: number; newlyUnlockedThemes: Theme[] } | null>(null);
   const navigate = useNavigate();
   const radarChartRef = useRef<HTMLDivElement>(null);
   const roadmapRef = useRef<HTMLDivElement>(null);
@@ -106,6 +113,7 @@ const QuizResults = () => {
   const { scrollYProgress } = useScroll({ target: containerRef });
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  const { awardQuizXP, levelInfo, userGamification } = useGamification();
 
   // Advanced confetti with multiple effects
   const triggerConfetti = useCallback(() => {
@@ -246,6 +254,33 @@ const QuizResults = () => {
     // Check achievements
     checkAchievements(parsedResults.analysis);
 
+    // Award XP for quiz completion
+    const awardXP = async () => {
+      if (awardQuizXP && parsedResults.level && parsedResults.answers) {
+        const difficulty = parsedResults.level.toLowerCase();
+        const questionsCount = parsedResults.answers.length;
+        
+        const result = await awardQuizXP(
+          parsedResults.analysis.overallScore,
+          difficulty,
+          questionsCount
+        );
+
+        if (result && result.leveledUp) {
+          // Show level up modal
+          setTimeout(() => {
+            setLevelUpData({
+              newLevel: result.newLevel,
+              newlyUnlockedThemes: result.newlyUnlockedThemes || []
+            });
+            setShowLevelUpModal(true);
+          }, 2000);
+        }
+      }
+    };
+
+    setTimeout(awardXP, 1000);
+
     // Load celebration animation with error handling
     fetch('https://lottie.host/4a834279-2b1b-4b6f-9c29-891d6c84aaed/OJ6nELQYXM.json')
       .then(res => {
@@ -264,7 +299,7 @@ const QuizResults = () => {
       utterance.pitch = 1.1;
       setTimeout(() => window.speechSynthesis.speak(utterance), 3000);
     }
-  }, [navigate, triggerConfetti, checkAchievements, playSound, soundEnabled]);
+  }, [navigate, triggerConfetti, checkAchievements, playSound, soundEnabled, awardQuizXP]);
 
   // Match real tutors from database based on subject and results
   const matchedTutors = useMemo((): MatchedTutor[] => {
@@ -789,6 +824,16 @@ const QuizResults = () => {
         )}
       </AnimatePresence>
 
+      {/* Level Up Modal */}
+      {levelUpData && (
+        <LevelUpModal
+          isOpen={showLevelUpModal}
+          onClose={() => setShowLevelUpModal(false)}
+          newLevel={levelUpData.newLevel}
+          newlyUnlockedThemes={levelUpData.newlyUnlockedThemes}
+        />
+      )}
+
       <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-4 sm:py-6 md:py-12 px-2 sm:px-3 md:px-4 relative overflow-x-hidden">
       {/* Animated Background Elements */}
       <motion.div 
@@ -918,6 +963,21 @@ const QuizResults = () => {
           >
             ✨ Your personalized learning roadmap awaits ✨
           </motion.p>
+
+          {/* Level Display */}
+          {levelInfo && userGamification && (
+            <motion.div
+              className="mt-6 flex flex-col items-center gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <LevelDisplay levelInfo={levelInfo} size="lg" />
+              <div className="w-full max-w-md">
+                <XPBar levelInfo={levelInfo} />
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Enhanced Score Card with Multiple Visualizations */}
