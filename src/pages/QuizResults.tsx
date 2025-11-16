@@ -1,22 +1,16 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
 import Lottie from "lottie-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { allTutors } from "@/data/tutors";
 import confetti from "canvas-confetti";
 import { ShareResults } from "@/components/ShareResults";
-import { useGamification } from "@/hooks/useGamification";
-import { LevelUpModal } from "@/components/gamification/LevelUpModal";
-import { XPBar } from "@/components/gamification/XPBar";
-import { LevelDisplay } from "@/components/gamification/LevelDisplay";
-import { Theme } from "@/types/gamification";
 import { 
   Brain, 
   TrendingUp, 
@@ -34,15 +28,7 @@ import {
   GraduationCap,
   User,
   Users,
-  TrendingDown,
-  Zap,
-  Trophy,
-  Flame,
-  Crown,
-  Volume2,
-  Eye,
-  Lightbulb,
-  BarChart3
+  TrendingDown
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -51,18 +37,7 @@ import {
   PolarAngleAxis, 
   PolarRadiusAxis, 
   Radar, 
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  Area,
-  AreaChart
+  ResponsiveContainer
 } from "recharts";
 
 interface QuizAnalysis {
@@ -98,141 +73,36 @@ const QuizResults = () => {
   const [results, setResults] = useState<any>(null);
   const [celebrationAnimation, setCelebrationAnimation] = useState<any>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([]);
-  const [hoveredTopic, setHoveredTopic] = useState<string | null>(null);
-  const [achievementsUnlocked, setAchievementsUnlocked] = useState<string[]>([]);
-  const [showAchievements, setShowAchievements] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
-  const [levelUpData, setLevelUpData] = useState<{ newLevel: number; newlyUnlockedThemes: Theme[] } | null>(null);
   const navigate = useNavigate();
   const radarChartRef = useRef<HTMLDivElement>(null);
   const roadmapRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef });
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
-  const { awardQuizXP, levelInfo, userGamification } = useGamification();
 
-  // Advanced confetti with multiple effects
   const triggerConfetti = useCallback(() => {
-    const duration = 5000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+    const duration = 3000;
+    const end = Date.now() + duration;
 
     const frame = () => {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) return;
-
-      const particleCount = 50 * (timeLeft / duration);
-
-      // Fire from multiple points
       confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        colors: ['#667eea', '#764ba2', '#f093fb', '#4facfe']
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#667eea', '#764ba2', '#f093fb']
       });
       confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        colors: ['#667eea', '#764ba2', '#f093fb', '#4facfe']
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#667eea', '#764ba2', '#f093fb']
       });
 
-      requestAnimationFrame(frame);
-    };
-
-    frame();
-
-    // Fireworks effect
-    setTimeout(() => {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#FFD700', '#FFA500', '#FF6347']
-      });
-    }, 1000);
-  }, []);
-
-  // Mouse trail particles
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      
-      // Create particle trail
-      if (Math.random() > 0.9) {
-        const newParticle = {
-          id: Date.now() + Math.random(),
-          x: e.clientX,
-          y: e.clientY
-        };
-        setParticles(prev => [...prev.slice(-20), newParticle]);
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
       }
     };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    frame();
   }, []);
-
-  // Clean up old particles
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setParticles(prev => prev.slice(-10));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Check achievements
-  const checkAchievements = useCallback((analysis: QuizAnalysis) => {
-    const achievements: string[] = [];
-    
-    if (analysis.overallScore >= 90) achievements.push('🏆 Master Scholar');
-    if (analysis.overallScore >= 80) achievements.push('⭐ Excellence Award');
-    if (analysis.overallScore >= 70) achievements.push('🎯 High Achiever');
-    if (analysis.strengths.length >= 3) achievements.push('💪 Multi-Talented');
-    if (analysis.knowledgeMap.some(k => k.score >= 95)) achievements.push('🔥 Perfect Topic Score');
-    if (analysis.proficiency === 'Advanced') achievements.push('👑 Advanced Learner');
-    
-    setAchievementsUnlocked(achievements);
-    if (achievements.length > 0) {
-      setTimeout(() => setShowAchievements(true), 2000);
-    }
-  }, []);
-
-  // Play achievement sound
-  const playSound = useCallback((type: 'achievement' | 'unlock' | 'success') => {
-    if (!soundEnabled) return;
-    
-    const frequencies = {
-      achievement: [523.25, 659.25, 783.99],
-      unlock: [440, 554.37, 659.25],
-      success: [523.25, 587.33, 659.25]
-    };
-
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    frequencies[type].forEach((freq, i) => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = freq;
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + i * 0.1);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.5);
-      
-      oscillator.start(audioContext.currentTime + i * 0.1);
-      oscillator.stop(audioContext.currentTime + i * 0.1 + 0.5);
-    });
-  }, [soundEnabled]);
 
   useEffect(() => {
     const storedResults = sessionStorage.getItem("quizResults");
@@ -245,41 +115,8 @@ const QuizResults = () => {
 
     // Trigger confetti for scores above 70%
     if (parsedResults.analysis.overallScore >= 70) {
-      setTimeout(() => {
-        triggerConfetti();
-        playSound('achievement');
-      }, 500);
+      setTimeout(() => triggerConfetti(), 500);
     }
-
-    // Check achievements
-    checkAchievements(parsedResults.analysis);
-
-    // Award XP for quiz completion
-    const awardXP = async () => {
-      if (awardQuizXP && parsedResults.level && parsedResults.answers) {
-        const difficulty = parsedResults.level.toLowerCase();
-        const questionsCount = parsedResults.answers.length;
-        
-        const result = await awardQuizXP(
-          parsedResults.analysis.overallScore,
-          difficulty,
-          questionsCount
-        );
-
-        if (result && result.leveledUp) {
-          // Show level up modal
-          setTimeout(() => {
-            setLevelUpData({
-              newLevel: result.newLevel,
-              newlyUnlockedThemes: result.newlyUnlockedThemes || []
-            });
-            setShowLevelUpModal(true);
-          }, 2000);
-        }
-      }
-    };
-
-    setTimeout(awardXP, 1000);
 
     // Load celebration animation with error handling
     fetch('https://lottie.host/4a834279-2b1b-4b6f-9c29-891d6c84aaed/OJ6nELQYXM.json')
@@ -289,17 +126,7 @@ const QuizResults = () => {
       })
       .then(data => setCelebrationAnimation(data))
       .catch(err => console.warn('Could not load celebration animation:', err));
-
-    // Voice announcement (optional)
-    if ('speechSynthesis' in window && soundEnabled) {
-      const utterance = new SpeechSynthesisUtterance(
-        `Congratulations! You scored ${parsedResults.analysis.overallScore}% and achieved ${parsedResults.analysis.proficiency} proficiency level.`
-      );
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      setTimeout(() => window.speechSynthesis.speak(utterance), 3000);
-    }
-  }, [navigate, triggerConfetti, checkAchievements, playSound, soundEnabled, awardQuizXP]);
+  }, [navigate, triggerConfetti]);
 
   // Match real tutors from database based on subject and results
   const matchedTutors = useMemo((): MatchedTutor[] => {
@@ -754,129 +581,13 @@ const QuizResults = () => {
     return "Priority focus area - daily practice essential";
   };
 
-  const getOverallInsight = (score: number, proficiency: string) => {
-    if (score >= 90) return `Outstanding performance! You're in the top tier of ${proficiency} learners. Consider advanced challenges to push your limits further.`;
-    if (score >= 80) return `Excellent work! Your ${proficiency} level shows strong fundamentals. Focus on real-world applications to solidify your expertise.`;
-    if (score >= 70) return `Great progress! You've reached ${proficiency} level. Consistent practice will help you master advanced concepts.`;
-    if (score >= 60) return `Good foundation! Work on strengthening weak areas while maintaining your current ${proficiency} level.`;
-    return `You're on the learning path. Focus on foundational concepts first, then gradually build up to ${proficiency} level skills.`;
-  };
-
 
   return (
     <>
-      {/* Mouse Trail Particles */}
-      <div className="fixed inset-0 pointer-events-none z-50">
-        <AnimatePresence>
-          {particles.map(particle => (
-            <motion.div
-              key={particle.id}
-              initial={{ opacity: 1, scale: 1 }}
-              animate={{ opacity: 0, scale: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-              className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-primary to-secondary"
-              style={{ left: particle.x, top: particle.y }}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* Achievement Popup */}
-      <AnimatePresence>
-        {showAchievements && achievementsUnlocked.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -100, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed top-4 right-4 z-50 max-w-sm"
-          >
-            <Card className="p-6 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/50 backdrop-blur-xl">
-              <div className="flex items-start gap-3">
-                <Trophy className="w-8 h-8 text-yellow-500 animate-bounce" />
-                <div>
-                  <h3 className="font-bold text-lg mb-2">🎉 Achievements Unlocked!</h3>
-                  <div className="space-y-1">
-                    {achievementsUnlocked.map((achievement, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.2 }}
-                        className="text-sm"
-                      >
-                        {achievement}
-                      </motion.div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowAchievements(false)}
-                    className="mt-3"
-                  >
-                    Dismiss
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Level Up Modal */}
-      {levelUpData && (
-        <LevelUpModal
-          isOpen={showLevelUpModal}
-          onClose={() => setShowLevelUpModal(false)}
-          newLevel={levelUpData.newLevel}
-          newlyUnlockedThemes={levelUpData.newlyUnlockedThemes}
-        />
-      )}
-
-      <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-4 sm:py-6 md:py-12 px-2 sm:px-3 md:px-4 relative overflow-x-hidden">
-      {/* Animated Background Elements */}
-      <motion.div 
-        className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"
-        animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.4, 0.6, 0.4]
-        }}
-        transition={{ duration: 4, repeat: Infinity }}
-      />
-      <motion.div 
-        className="absolute bottom-20 right-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl"
-        animate={{ 
-          scale: [1, 1.3, 1],
-          opacity: [0.4, 0.6, 0.4]
-        }}
-        transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-      />
-      <motion.div 
-        className="absolute top-1/2 left-1/4 w-24 h-24 bg-accent/5 rounded-full blur-2xl"
-        animate={{ 
-          y: [0, -30, 0],
-          opacity: [0.3, 0.5, 0.3]
-        }}
-        transition={{ duration: 6, repeat: Infinity }}
-      />
-
-      {/* Sound Toggle */}
-      <motion.div
-        className="fixed top-4 left-4 z-40"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1 }}
-      >
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          className="rounded-full backdrop-blur-xl bg-background/80"
-        >
-          <Volume2 className={`w-4 h-4 ${soundEnabled ? 'text-primary' : 'text-muted-foreground'}`} />
-        </Button>
-      </motion.div>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-4 sm:py-6 md:py-12 px-2 sm:px-3 md:px-4 relative overflow-x-hidden">
+      {/* Static Background Elements - no animation for performance */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-40" />
+      <div className="absolute bottom-20 right-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl opacity-40" />
 
       <motion.div
         className="container max-w-6xl mx-auto relative z-10"
@@ -884,321 +595,144 @@ const QuizResults = () => {
         initial="hidden"
         animate="visible"
       >
-        {/* Hero Section with Enhanced Animation */}
+        {/* Hero Section with Lottie */}
         <motion.div variants={itemVariants} className="text-center mb-6 md:mb-8">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", duration: 0.8 }}
-            className="inline-block mb-4 md:mb-6 relative"
+            className="inline-block mb-4 md:mb-6"
           >
-            {/* Holographic Glow Effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-accent rounded-full blur-2xl"
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                scale: { duration: 2, repeat: Infinity }
-              }}
-            />
-            
             {celebrationAnimation ? (
-              <div className="relative z-10">
-                <Lottie animationData={celebrationAnimation} loop={true} className="w-32 h-32 md:w-48 md:h-48" />
-              </div>
+              <Lottie animationData={celebrationAnimation} loop={true} className="w-32 h-32 md:w-48 md:h-48" />
             ) : (
-              <div className="relative z-10 bg-gradient-to-br from-primary/20 to-secondary/20 p-6 md:p-8 rounded-full">
+              <div className="bg-gradient-to-br from-primary/20 to-secondary/20 p-6 md:p-8 rounded-full">
                 <Award className="w-16 h-16 md:w-24 md:h-24 text-primary" />
               </div>
             )}
           </motion.div>
           
           <motion.h1 
-            className="text-2xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-3 px-2"
+            className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent px-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-gradient">
-              Your {results.subject} Mastery Level
-            </span>
+            Your {results.subject} Mastery Level
           </motion.h1>
-          
-          <motion.div
-            className="flex items-center justify-center gap-3 mb-4"
+          <motion.p 
+            className="text-xl md:text-2xl font-bold text-primary mb-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <Badge className="text-xl md:text-3xl px-6 py-2 bg-gradient-to-r from-primary to-secondary">
-              {analysis.proficiency}
-            </Badge>
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Flame className="w-8 h-8 text-orange-500" />
-            </motion.div>
-          </motion.div>
-          
-          <motion.p 
-            className="text-3xl md:text-5xl font-bold mb-4"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, type: "spring" }}
-          >
-            <span className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              {analysis.overallScore}%
-            </span>
+            {analysis.proficiency} ({analysis.overallScore}%)
           </motion.p>
-          
           <motion.p 
             className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.5 }}
           >
-            ✨ Your personalized learning roadmap awaits ✨
+            Below is your personalized learning roadmap
           </motion.p>
-
-          {/* Level Display */}
-          {levelInfo && userGamification && (
-            <motion.div
-              className="mt-6 flex flex-col items-center gap-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-            >
-              <LevelDisplay levelInfo={levelInfo} size="lg" />
-              <div className="w-full max-w-md">
-                <XPBar levelInfo={levelInfo} />
-              </div>
-            </motion.div>
-          )}
         </motion.div>
 
-        {/* Enhanced Score Card with Multiple Visualizations */}
+        {/* Overall Score Card */}
         <motion.div variants={itemVariants}>
-          <Card className="p-4 md:p-8 lg:p-10 mb-4 md:mb-6 relative overflow-hidden backdrop-blur-xl bg-gradient-to-br from-card/80 via-card/90 to-primary/10 border-2 border-primary/20">
-            {/* Animated Background Gradients */}
-            <motion.div 
-              className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-3xl"
-              animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
-              transition={{ duration: 8, repeat: Infinity }}
-            />
-            <motion.div 
-              className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-accent/20 to-primary/20 rounded-full blur-3xl"
-              animate={{ scale: [1, 1.3, 1], rotate: [0, -90, 0] }}
-              transition={{ duration: 10, repeat: Infinity }}
-            />
+          <Card className="p-4 md:p-8 lg:p-10 mb-4 md:mb-6 text-center relative overflow-hidden bg-gradient-to-br from-card via-card to-primary/5">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl opacity-40" />
             
             <div className="relative z-10">
-              {/* 3D Score Display */}
               <motion.div 
-                className="inline-block mb-6"
-                whileHover={{ scale: 1.05, rotateY: 10 }}
-                style={{ perspective: 1000 }}
+                className="inline-block mb-4 md:mb-6"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto">
-                  {/* Glowing Ring Effect */}
-                  <motion.div
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-primary via-secondary to-accent opacity-20"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  />
-                  
-                  <svg className="w-full h-full transform -rotate-90">
-                    <defs>
-                      <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="rgb(var(--primary))" />
-                        <stop offset="50%" stopColor="rgb(var(--secondary))" />
-                        <stop offset="100%" stopColor="rgb(var(--accent))" />
-                      </linearGradient>
-                      <filter id="glow">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
-                    
-                    {/* Background Circle */}
+                <div className="relative w-32 h-32 md:w-40 md:h-40 mx-auto">
+                  <svg 
+                    className="w-full h-full"
+                    viewBox="0 0 160 160"
+                  >
                     <circle
-                      cx="50%"
-                      cy="50%"
-                      r="45%"
-                      fill="none"
-                      stroke="currentColor"
+                      className="text-secondary/30"
                       strokeWidth="12"
-                      className="text-muted/30"
+                      stroke="currentColor"
+                      fill="transparent"
+                      r={circleProps.radius}
+                      cx="80"
+                      cy="80"
                     />
-                    
-                    {/* Animated Progress Circle */}
                     <motion.circle
-                      cx="50%"
-                      cy="50%"
-                      r="45%"
-                      fill="none"
-                      stroke="url(#scoreGradient)"
-                      strokeWidth="14"
+                      className="text-primary"
+                      strokeWidth="12"
+                      strokeDasharray={circleProps.dashArray}
                       strokeLinecap="round"
-                      strokeDasharray={`${2 * Math.PI * 70} ${2 * Math.PI * 70}`}
-                      initial={{ strokeDashoffset: 2 * Math.PI * 70 }}
-                      animate={{ strokeDashoffset: 2 * Math.PI * 70 * (1 - analysis.overallScore / 100) }}
-                      transition={{ duration: 2, ease: "easeOut" }}
-                      filter="url(#glow)"
+                      stroke="currentColor"
+                      fill="transparent"
+                      r={circleProps.radius}
+                      cx="80"
+                      cy="80"
+                      style={{ 
+                        transform: "rotate(-90deg)", 
+                        transformOrigin: "50% 50%",
+                        willChange: "stroke-dasharray"
+                      }}
+                      initial={{ strokeDashoffset: 440 }}
+                      animate={{ strokeDashoffset: 0 }}
+                      transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
                     />
                   </svg>
-                  
-                  {/* Center Score Display */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.5, type: "spring" }}
-                    >
-                      <Crown className="w-8 h-8 md:w-10 md:h-10 text-yellow-500 mb-2" />
-                    </motion.div>
-                    <motion.p 
-                      className="text-4xl md:text-5xl font-bold bg-gradient-to-br from-primary via-secondary to-accent bg-clip-text text-transparent"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1 }}
-                    >
+                  <motion.div 
+                    className="absolute inset-0 flex flex-col items-center justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <Star className="w-6 h-6 text-primary mb-0.5" />
+                    <span className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent leading-none">
                       {analysis.overallScore}%
-                    </motion.p>
-                    <p className="text-xs md:text-sm text-muted-foreground">Score</p>
-                  </div>
+                    </span>
+                  </motion.div>
                 </div>
               </motion.div>
-
-              {/* Multi-Chart Comparison Section */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {/* Progress vs Benchmark */}
-                <motion.div
-                  className="p-4 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50"
-                  whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <BarChart3 className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold">vs. Benchmarks</h4>
-                  </div>
-                  <div className="space-y-2">
-                    {Object.entries(BENCHMARKS).map(([level, data]) => (
-                      <div key={level}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="capitalize">{level}</span>
-                          <span className="font-mono">{data.avg}%</span>
-                        </div>
-                        <div className="relative h-2 bg-muted rounded-full overflow-hidden">
-                          <motion.div
-                            className={`absolute left-0 top-0 h-full rounded-full ${
-                              analysis.overallScore > data.avg ? 'bg-green-500' : 'bg-orange-500'
-                            }`}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${Math.min(100, (analysis.overallScore / data.avg) * 100)}%` }}
-                            transition={{ duration: 1.5, delay: 0.5 }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-
-                {/* Stats Panel */}
-                <motion.div
-                  className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <Zap className="w-5 h-5 text-yellow-500 mb-3" />
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-2xl font-bold">{analysis.strengths.length}</p>
-                      <p className="text-xs text-muted-foreground">Strong Areas</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{analysis.knowledgeMap.length}</p>
-                      <p className="text-xs text-muted-foreground">Topics Analyzed</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{analysis.roadmap.length}</p>
-                      <p className="text-xs text-muted-foreground">Week Plan</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Achievement Progress */}
-                <motion.div
-                  className="p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <Trophy className="w-5 h-5 text-yellow-500 mb-3" />
-                  <h4 className="font-semibold mb-3">Achievements</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {achievementsUnlocked.slice(0, 4).map((ach, idx) => (
-                      <motion.div
-                        key={idx}
-                        className="text-2xl"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 1 + idx * 0.1 }}
-                        whileHover={{ scale: 1.2, rotate: 10 }}
-                      >
-                        {ach.split(' ')[0]}
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap justify-center gap-3">
-                <Button 
-                  onClick={generateResultsPDF}
-                  disabled={isGeneratingPDF}
-                  className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
-                  size="lg"
-                >
-                  <Download className="w-4 h-4" />
-                  {isGeneratingPDF ? "Generating..." : "Download Full Report"}
-                </Button>
-                
-                <ShareResults
-                  subject={results.subject}
-                  overallScore={analysis.overallScore}
-                  proficiency={analysis.proficiency}
-                />
-                
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => navigate("/start-trial")}
-                  className="gap-2 border-2"
-                >
-                  <Rocket className="w-4 h-4" />
-                  Start Your Journey
-                </Button>
-              </div>
-
-              {/* Actionable Insight */}
+              
               <motion.div
-                className="mt-6 p-4 rounded-xl bg-accent/10 border border-accent/30"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5 }}
+                transition={{ delay: 1 }}
               >
-                <div className="flex items-start gap-3">
-                  <Lightbulb className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-semibold mb-1">💡 Quick Insight</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {getOverallInsight(analysis.overallScore, analysis.proficiency)}
-                    </p>
-                  </div>
+                <Badge className="mb-3 md:mb-4 text-base md:text-lg px-3 md:px-4 py-1.5 md:py-2" variant="secondary">
+                  <Rocket className="w-3 h-3 md:w-4 md:h-4 mr-2" />
+                  {analysis.proficiency}
+                </Badge>
+                <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">Your learning journey starts here!</p>
+                <div className="flex flex-col gap-2 md:gap-3 justify-center max-w-lg mx-auto">
+                  <Button 
+                    onClick={generateResultsPDF} 
+                    size="default"
+                    className="w-full shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
+                    disabled={isGeneratingPDF}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    {isGeneratingPDF ? 'Generating...' : 'Download Results'}
+                  </Button>
+                  <Button 
+                    onClick={generateRoadmapPDF} 
+                    size="default"
+                    variant="outline"
+                    className="w-full shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
+                    disabled={isGeneratingPDF}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {isGeneratingPDF ? 'Generating...' : 'Download Roadmap'}
+                  </Button>
+                  <ShareResults 
+                    studentName={results.studentName}
+                    subject={results.subject}
+                    overallScore={analysis.overallScore}
+                    proficiency={analysis.proficiency}
+                  />
                 </div>
               </motion.div>
             </div>
