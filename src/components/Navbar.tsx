@@ -5,15 +5,11 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useGamification } from "@/hooks/useGamification";
-import { LevelDisplay } from "@/components/gamification/LevelDisplay";
-import { ThemeSelector } from "@/components/gamification/ThemeSelector";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { isAdmin, user, signOut } = useAuth();
-  const { levelInfo, userGamification, themes, unlockedThemes, changeTheme } = useGamification();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,26 +75,6 @@ const Navbar = () => {
 
           {/* Right Side - Always Visible */}
           <div className="flex items-center gap-2 md:gap-4">
-            {/* Gamification Elements */}
-            {user && levelInfo && userGamification && (
-              <>
-                <div className="hidden lg:block">
-                  <LevelDisplay levelInfo={levelInfo} size="sm" showTitle={false} />
-                </div>
-                <ThemeSelector
-                  themes={themes}
-                  unlockedThemes={unlockedThemes}
-                  currentTheme={userGamification.current_theme}
-                  userStats={{
-                    level: userGamification.level,
-                    xp: userGamification.xp,
-                    highest_score: userGamification.highest_score
-                  }}
-                  onThemeChange={changeTheme}
-                />
-              </>
-            )}
-            
             <ThemeToggle />
             {isAdmin && (
               <Link to="/admin">
