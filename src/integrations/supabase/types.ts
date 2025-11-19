@@ -252,6 +252,90 @@ export type Database = {
         }
         Relationships: []
       }
+      themes: {
+        Row: {
+          accent_color: string
+          created_at: string | null
+          description: string
+          display_name: string
+          id: string
+          is_premium: boolean | null
+          name: string
+          preview_image: string | null
+          primary_color: string
+          secondary_color: string
+          unlock_requirement: string
+          unlock_value: number
+        }
+        Insert: {
+          accent_color: string
+          created_at?: string | null
+          description: string
+          display_name: string
+          id?: string
+          is_premium?: boolean | null
+          name: string
+          preview_image?: string | null
+          primary_color: string
+          secondary_color: string
+          unlock_requirement: string
+          unlock_value: number
+        }
+        Update: {
+          accent_color?: string
+          created_at?: string | null
+          description?: string
+          display_name?: string
+          id?: string
+          is_premium?: boolean | null
+          name?: string
+          preview_image?: string | null
+          primary_color?: string
+          secondary_color?: string
+          unlock_requirement?: string
+          unlock_value?: number
+        }
+        Relationships: []
+      }
+      user_gamification: {
+        Row: {
+          created_at: string | null
+          current_theme: string
+          highest_score: number
+          id: string
+          level: number
+          total_quizzes_taken: number
+          total_study_time_minutes: number
+          updated_at: string | null
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string | null
+          current_theme?: string
+          highest_score?: number
+          id?: string
+          level?: number
+          total_quizzes_taken?: number
+          total_study_time_minutes?: number
+          updated_at?: string | null
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string | null
+          current_theme?: string
+          highest_score?: number
+          id?: string
+          level?: number
+          total_quizzes_taken?: number
+          total_study_time_minutes?: number
+          updated_at?: string | null
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -270,6 +354,62 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_unlocked_themes: {
+        Row: {
+          id: string
+          theme_id: string
+          unlocked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          theme_id: string
+          unlocked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          theme_id?: string
+          unlocked_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_unlocked_themes_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xp_transactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          source: string
+          source_details: Json | null
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          source: string
+          source_details?: Json | null
+          user_id: string
+          xp_amount: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          source?: string
+          source_details?: Json | null
+          user_id?: string
+          xp_amount?: number
         }
         Relationships: []
       }
