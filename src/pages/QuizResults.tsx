@@ -714,24 +714,24 @@ const QuizResults = () => {
                   {analysis.proficiency}
                 </Badge>
                 <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">Your learning journey starts here!</p>
-                <div className="flex flex-col gap-2 md:gap-3 justify-center max-w-lg mx-auto">
+                <div className="flex flex-col sm:flex-row gap-2 md:gap-3 justify-center max-w-2xl mx-auto px-2">
                   <Button 
                     onClick={generateResultsPDF} 
-                    size="default"
-                    className="w-full shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
+                    size="lg"
+                    className="flex-1 shadow-lg hover:shadow-xl transition-all text-sm md:text-base py-3 md:py-6"
                     disabled={isGeneratingPDF}
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                     {isGeneratingPDF ? 'Generating...' : 'Download Results'}
                   </Button>
                   <Button 
                     onClick={generateRoadmapPDF} 
-                    size="default"
+                    size="lg"
                     variant="outline"
-                    className="w-full shadow-lg hover:shadow-xl transition-all text-sm md:text-base"
+                    className="flex-1 shadow-lg hover:shadow-xl transition-all text-sm md:text-base py-3 md:py-6"
                     disabled={isGeneratingPDF}
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
+                    <Calendar className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                     {isGeneratingPDF ? 'Generating...' : 'Download Roadmap'}
                   </Button>
                   <ShareResults 
@@ -745,106 +745,136 @@ const QuizResults = () => {
             </div>
           </Card>
         </motion.div>
-
-        {/* Psychological Profile - New Section */}
         {analysis.psychologicalProfile && (
           <motion.div variants={itemVariants}>
-            <Card className="p-4 md:p-6 lg:p-8 mb-4 md:mb-6 relative overflow-hidden bg-gradient-to-br from-card via-card to-accent/5">
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-40" />
+            <Card className="p-4 md:p-6 lg:p-8 mb-4 md:mb-6 relative overflow-hidden border-2">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full blur-3xl opacity-60" />
               
               <motion.div 
-                className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6"
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
+                className="flex items-center gap-2 md:gap-3 mb-6"
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="p-1.5 md:p-2 bg-accent/10 rounded-lg">
-                  <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent" />
+                <div className="p-2 md:p-2.5 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl">
+                  <Brain className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                 </div>
-                <h2 className="text-lg md:text-2xl lg:text-3xl font-bold">Your Learning Soul</h2>
+                <div>
+                  <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-foreground">Behavioral Analysis</h2>
+                  <p className="text-xs md:text-sm text-muted-foreground">Based on your response patterns</p>
+                </div>
               </motion.div>
 
-              <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-6 relative z-10">
+              {/* Learning Profile Cards */}
+              <div className="grid sm:grid-cols-3 gap-3 md:gap-4 mb-6 relative z-10">
                 <motion.div
-                  className="bg-gradient-to-br from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="group relative p-4 md:p-5 rounded-xl border-2 border-border bg-card hover:border-primary/50 transition-all duration-300"
+                  whileHover={{ y: -4 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Brain className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                    <h3 className="font-semibold text-sm md:text-base">Learning Style</h3>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <GraduationCap className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-sm md:text-base text-foreground">Learning Style</h3>
+                    </div>
+                    <p className="text-xl md:text-2xl font-bold text-primary mb-2">{analysis.psychologicalProfile.learningStyle}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Optimal information processing</p>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-primary mb-1">{analysis.psychologicalProfile.learningStyle}</p>
-                  <p className="text-xs md:text-sm text-muted-foreground">How you absorb information best</p>
                 </motion.div>
 
                 <motion.div
-                  className="bg-gradient-to-br from-secondary/5 to-secondary/10 p-4 rounded-lg border border-secondary/20"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="group relative p-4 md:p-5 rounded-xl border-2 border-border bg-card hover:border-secondary/50 transition-all duration-300"
+                  whileHover={{ y: -4 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
-                    <h3 className="font-semibold text-sm md:text-base">Confidence</h3>
+                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 bg-secondary/10 rounded-lg">
+                        <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
+                      </div>
+                      <h3 className="font-semibold text-sm md:text-base text-foreground">Confidence</h3>
+                    </div>
+                    <p className="text-xl md:text-2xl font-bold text-secondary mb-2">{analysis.psychologicalProfile.confidenceLevel}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Self-assurance indicator</p>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-secondary mb-1">{analysis.psychologicalProfile.confidenceLevel}</p>
-                  <p className="text-xs md:text-sm text-muted-foreground">Your self-assurance level</p>
                 </motion.div>
 
                 <motion.div
-                  className="bg-gradient-to-br from-accent/5 to-accent/10 p-4 rounded-lg border border-accent/20"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="group relative p-4 md:p-5 rounded-xl border-2 border-border bg-card hover:border-accent/50 transition-all duration-300"
+                  whileHover={{ y: -4 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-accent" />
-                    <h3 className="font-semibold text-sm md:text-base">Decision Style</h3>
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 bg-accent/10 rounded-lg">
+                        <Clock className="w-4 h-4 md:w-5 md:h-5 text-accent" />
+                      </div>
+                      <h3 className="font-semibold text-sm md:text-base text-foreground">Decision Making</h3>
+                    </div>
+                    <p className="text-xl md:text-2xl font-bold text-accent mb-2">{analysis.psychologicalProfile.decisionMaking}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Response approach style</p>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-accent mb-1">{analysis.psychologicalProfile.decisionMaking}</p>
-                  <p className="text-xs md:text-sm text-muted-foreground">How you approach choices</p>
                 </motion.div>
               </div>
 
-              <div className="space-y-4 md:space-y-6 relative z-10">
+              {/* Behavioral Insights */}
+              <div className="space-y-5 relative z-10">
                 <div>
-                  <h3 className="font-semibold text-base md:text-lg mb-3 flex items-center gap-2">
-                    <User className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                    Behavioral Patterns
-                  </h3>
-                  <div className="space-y-2">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-1 w-1 rounded-full bg-primary" />
+                    <h3 className="font-bold text-base md:text-lg text-foreground">Observed Patterns</h3>
+                  </div>
+                  <div className="grid gap-3">
                     {analysis.psychologicalProfile.patterns.map((pattern, idx) => (
                       <motion.div
                         key={idx}
-                        className="flex items-start gap-2 md:gap-3 p-3 bg-card/50 rounded-lg border border-border/50"
+                        className="relative p-4 rounded-lg bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * idx }}
+                        transition={{ delay: 0.6 + idx * 0.1 }}
                       >
-                        <div className="mt-0.5">
-                          <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary" />
+                        <div className="flex items-start gap-3">
+                          <div className="mt-1 flex-shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                              <span className="text-xs font-bold text-primary">{idx + 1}</span>
+                            </div>
+                          </div>
+                          <p className="text-sm md:text-base text-foreground leading-relaxed">{pattern}</p>
                         </div>
-                        <p className="text-xs md:text-sm text-muted-foreground flex-1">{pattern}</p>
                       </motion.div>
                     ))}
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="font-semibold text-base md:text-lg mb-3 flex items-center gap-2">
-                    <Target className="w-4 h-4 md:w-5 md:h-5 text-accent" />
-                    Personalized Strategies
-                  </h3>
-                  <div className="space-y-2">
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-1 w-1 rounded-full bg-accent" />
+                    <h3 className="font-bold text-base md:text-lg text-foreground">Recommended Strategies</h3>
+                  </div>
+                  <div className="grid gap-3">
                     {analysis.psychologicalProfile.recommendations.map((rec, idx) => (
                       <motion.div
                         key={idx}
-                        className="flex items-start gap-2 md:gap-3 p-3 bg-accent/5 rounded-lg border border-accent/20"
+                        className="relative p-4 rounded-lg bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * idx }}
+                        transition={{ delay: 0.8 + idx * 0.1 }}
                       >
-                        <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-accent flex-shrink-0 mt-0.5" />
-                        <p className="text-xs md:text-sm flex-1">{rec}</p>
+                        <div className="flex items-start gap-3">
+                          <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                          <p className="text-sm md:text-base text-foreground leading-relaxed">{rec}</p>
+                        </div>
                       </motion.div>
                     ))}
                   </div>
