@@ -19,6 +19,14 @@ interface Question {
   difficulty?: string;
 }
 
+interface BehavioralData {
+  answerChanges: { questionIndex: number; from: string; to: string; timestamp: number }[];
+  timePerQuestion: { questionIndex: number; timeSpent: number }[];
+  answerPattern: string[];
+  hesitationCount: number;
+  quickAnswers: number;
+}
+
 const SUBJECTS = [
   { value: "mathematics", label: "Mathematics" },
   { value: "science", label: "Science" },
@@ -39,6 +47,14 @@ const DiagnosticQuiz = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [behavioralData, setBehavioralData] = useState<BehavioralData>({
+    answerChanges: [],
+    timePerQuestion: [],
+    answerPattern: [],
+    hesitationCount: 0,
+    quickAnswers: 0,
+  });
+  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -78,6 +94,25 @@ const DiagnosticQuiz = () => {
   };
 
   const handleAnswer = (answer: string) => {
+    const previousAnswer = answers[currentQuestion];
+    
+    // Track answer changes (hesitation)
+    if (previousAnswer && previousAnswer !== answer) {
+      setBehavioralData(prev => ({
+        ...prev,
+        answerChanges: [
+          ...prev.answerChanges,
+          {
+            questionIndex: currentQuestion,
+            from: previousAnswer,
+            to: answer,
+            timestamp: Date.now(),
+          }
+        ],
+        hesitationCount: prev.hesitationCount + 1,
+      }));
+    }
+    
     setAnswers({ ...answers, [currentQuestion]: answer });
   };
 
@@ -90,8 +125,20 @@ const DiagnosticQuiz = () => {
       return;
     }
 
+    // Track time spent on question
+    const timeSpent = (Date.now() - questionStartTime) / 1000; // in seconds
+    setBehavioralData(prev => ({
+      ...prev,
+      timePerQuestion: [
+        ...prev.timePerQuestion,
+        { questionIndex: currentQuestion, timeSpent }
+      ],
+      quickAnswers: timeSpent < 5 ? prev.quickAnswers + 1 : prev.quickAnswers,
+    }));
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      setQuestionStartTime(Date.now());
     } else {
       analyzeQuiz();
     }
@@ -117,8 +164,21 @@ const DiagnosticQuiz = () => {
         difficulty: q.difficulty || "medium"
       }));
 
+      // Calculate behavioral patterns
+      const avgTimePerQuestion = behavioralData.timePerQuestion.reduce((sum, item) => sum + item.timeSpent, 0) / behavioralData.timePerQuestion.length;
+      const consistencyPattern = questions.map((_, idx) => answers[idx] ? '1' : '0').join('');
+
       const { data, error } = await supabase.functions.invoke("analyze-quiz", {
-        body: { answers: answersWithCorrectness, subject, level }
+        body: { 
+          answers: answersWithCorrectness, 
+          subject, 
+          level,
+          behavioralData: {
+            ...behavioralData,
+            avgTimePerQuestion,
+            consistencyPattern,
+          }
+        }
       });
 
       if (error) throw error;

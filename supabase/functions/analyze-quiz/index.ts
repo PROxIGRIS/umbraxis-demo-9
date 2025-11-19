@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { answers, subject } = await req.json();
+    const { answers, subject, behavioralData } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -31,12 +31,21 @@ serve(async (req) => {
         messages: [
           { 
             role: "system", 
-            content: `You are an educational assessment expert. Analyze student quiz answers and provide:
+            content: `You are an educational psychology and assessment expert. Analyze student quiz answers AND behavioral patterns to provide deep insights:
+
 1. Overall proficiency level (Beginner/Intermediate/Advanced)
 2. Knowledge map with 6-8 specific topics and scores (0-100)
 3. Top 3 strengths and 3 areas for improvement
 4. Personalized 90-day study roadmap with weekly goals
 5. Recommended tutor match criteria
+6. PSYCHOLOGICAL INSIGHTS based on behavior:
+   - Analyze answer changes (hesitation patterns)
+   - Quick answers (impulsiveness vs confidence)
+   - Time patterns (rushed, thoughtful, overthinking)
+   - Consistency (random vs strategic)
+   - Learning style indicators
+   - Confidence level assessment
+   - Decision-making patterns
 
 Return valid JSON only with this structure:
 {
@@ -46,12 +55,19 @@ Return valid JSON only with this structure:
   "strengths": ["string"],
   "improvements": ["string"],
   "roadmap": [{"week": number, "goal": "string", "activities": ["string"]}],
-  "tutorMatch": {"style": "string", "focus": ["string"], "sessionFrequency": "string"}
+  "tutorMatch": {"style": "string", "focus": ["string"], "sessionFrequency": "string"},
+  "psychologicalProfile": {
+    "learningStyle": "string (Visual/Auditory/Kinesthetic/Mixed)",
+    "confidenceLevel": "string (Low/Medium/High)",
+    "decisionMaking": "string (Impulsive/Deliberate/Overthinking)",
+    "patterns": ["string array of 3-5 behavioral insights"],
+    "recommendations": ["string array of 3-4 personalized strategies"]
+  }
 }` 
           },
           { 
             role: "user", 
-            content: `Subject: ${subject}\n\nStudent Answers:\n${JSON.stringify(answers, null, 2)}\n\nAnalyze this quiz and provide detailed educational insights.`
+            content: `Subject: ${subject}\n\nStudent Answers:\n${JSON.stringify(answers, null, 2)}\n\nBehavioral Data:\n${JSON.stringify(behavioralData, null, 2)}\n\nAnalyze this quiz deeply. Look into their soul through their behavior patterns. If they changed answers, note hesitation. If they answered quickly (< 5 seconds), note impulsiveness. Provide profound psychological insights.`
           }
         ],
       }),

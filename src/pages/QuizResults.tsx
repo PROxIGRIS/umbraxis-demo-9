@@ -48,6 +48,13 @@ interface QuizAnalysis {
   improvements: string[];
   roadmap: Array<{ week: number; goal: string; activities: string[] }>;
   tutorMatch: { style: string; focus: string[]; sessionFrequency: string };
+  psychologicalProfile?: {
+    learningStyle: string;
+    confidenceLevel: string;
+    decisionMaking: string;
+    patterns: string[];
+    recommendations: string[];
+  };
 }
 
 interface MatchedTutor {
@@ -584,7 +591,7 @@ const QuizResults = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-4 sm:py-6 md:py-12 px-2 sm:px-3 md:px-4 relative overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-4 sm:py-6 md:py-12 px-3 sm:px-4 md:px-6 relative overflow-x-hidden">
       {/* Static Background Elements - no animation for performance */}
       <div className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-40" />
       <div className="absolute bottom-20 right-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl opacity-40" />
@@ -739,6 +746,114 @@ const QuizResults = () => {
           </Card>
         </motion.div>
 
+        {/* Psychological Profile - New Section */}
+        {analysis.psychologicalProfile && (
+          <motion.div variants={itemVariants}>
+            <Card className="p-4 md:p-6 lg:p-8 mb-4 md:mb-6 relative overflow-hidden bg-gradient-to-br from-card via-card to-accent/5">
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-40" />
+              
+              <motion.div 
+                className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="p-1.5 md:p-2 bg-accent/10 rounded-lg">
+                  <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-accent" />
+                </div>
+                <h2 className="text-lg md:text-2xl lg:text-3xl font-bold">Your Learning Soul</h2>
+              </motion.div>
+
+              <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-6 relative z-10">
+                <motion.div
+                  className="bg-gradient-to-br from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Brain className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                    <h3 className="font-semibold text-sm md:text-base">Learning Style</h3>
+                  </div>
+                  <p className="text-lg md:text-xl font-bold text-primary mb-1">{analysis.psychologicalProfile.learningStyle}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">How you absorb information best</p>
+                </motion.div>
+
+                <motion.div
+                  className="bg-gradient-to-br from-secondary/5 to-secondary/10 p-4 rounded-lg border border-secondary/20"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Star className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
+                    <h3 className="font-semibold text-sm md:text-base">Confidence</h3>
+                  </div>
+                  <p className="text-lg md:text-xl font-bold text-secondary mb-1">{analysis.psychologicalProfile.confidenceLevel}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">Your self-assurance level</p>
+                </motion.div>
+
+                <motion.div
+                  className="bg-gradient-to-br from-accent/5 to-accent/10 p-4 rounded-lg border border-accent/20"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-accent" />
+                    <h3 className="font-semibold text-sm md:text-base">Decision Style</h3>
+                  </div>
+                  <p className="text-lg md:text-xl font-bold text-accent mb-1">{analysis.psychologicalProfile.decisionMaking}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">How you approach choices</p>
+                </motion.div>
+              </div>
+
+              <div className="space-y-4 md:space-y-6 relative z-10">
+                <div>
+                  <h3 className="font-semibold text-base md:text-lg mb-3 flex items-center gap-2">
+                    <User className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                    Behavioral Patterns
+                  </h3>
+                  <div className="space-y-2">
+                    {analysis.psychologicalProfile.patterns.map((pattern, idx) => (
+                      <motion.div
+                        key={idx}
+                        className="flex items-start gap-2 md:gap-3 p-3 bg-card/50 rounded-lg border border-border/50"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 * idx }}
+                      >
+                        <div className="mt-0.5">
+                          <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary" />
+                        </div>
+                        <p className="text-xs md:text-sm text-muted-foreground flex-1">{pattern}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-base md:text-lg mb-3 flex items-center gap-2">
+                    <Target className="w-4 h-4 md:w-5 md:h-5 text-accent" />
+                    Personalized Strategies
+                  </h3>
+                  <div className="space-y-2">
+                    {analysis.psychologicalProfile.recommendations.map((rec, idx) => (
+                      <motion.div
+                        key={idx}
+                        className="flex items-start gap-2 md:gap-3 p-3 bg-accent/5 rounded-lg border border-accent/20"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 * idx }}
+                      >
+                        <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-accent flex-shrink-0 mt-0.5" />
+                        <p className="text-xs md:text-sm flex-1">{rec}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Knowledge Map */}
         <motion.div variants={itemVariants}>
           <Card className="p-4 md:p-6 lg:p-8 mb-4 md:mb-6 relative overflow-hidden">
@@ -801,18 +916,18 @@ const QuizResults = () => {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.5 + idx * 0.1 }}
-                      whileHover={{ x: 5 }}
-                      className="p-4 rounded-lg hover:bg-accent/10 transition-colors border border-border/50 bg-card"
-                    >
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="font-semibold">{item.topic}</span>
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            variant="secondary" 
-                            className={`text-sm font-bold ${getScoreTextColor(item.score)}`}
-                          >
-                            {item.score}%
-                          </Badge>
+                     whileHover={{ x: 5 }}
+                     className="p-3 md:p-4 rounded-lg hover:bg-accent/10 transition-colors border border-border/50 bg-card"
+                   >
+                     <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+                       <span className="font-semibold text-sm md:text-base">{item.topic}</span>
+                       <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+                         <Badge 
+                           variant="secondary" 
+                           className={`text-xs md:text-sm font-bold ${getScoreTextColor(item.score)}`}
+                         >
+                           {item.score}%
+                         </Badge>
                           {vsAverage > 0 ? (
                             <Badge variant="outline" className="text-xs gap-1">
                               <TrendingUp className="w-3 h-3" />
@@ -844,11 +959,11 @@ const QuizResults = () => {
                           <Users className="w-3 h-3 absolute -top-4 -left-1.5 text-muted-foreground" />
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2 dark:text-muted-foreground">{item.description}</p>
-                      <div className="flex items-start gap-2 text-xs flex-wrap">
-                        <span className="font-medium text-primary dark:text-primary">💡 {getActionableInsight(item.topic, item.score)}</span>
-                        <span className="text-muted-foreground dark:text-muted-foreground">• Avg: {benchmark.avg}%</span>
-                      </div>
+                       <p className="text-xs md:text-sm text-muted-foreground mb-2 leading-relaxed">{item.description}</p>
+                       <div className="flex items-start gap-2 text-xs flex-wrap">
+                         <span className="font-medium text-primary">💡 {getActionableInsight(item.topic, item.score)}</span>
+                         <span className="text-muted-foreground">• Avg: {benchmark.avg}%</span>
+                       </div>
                     </motion.div>
                   );
                 })}
