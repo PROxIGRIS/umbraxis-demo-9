@@ -802,7 +802,17 @@ const QuizResults = () => {
                       </div>
                       <h3 className="font-semibold text-sm md:text-base text-foreground">Confidence</h3>
                     </div>
-                    <p className="text-xl md:text-2xl font-bold text-secondary mb-2">{analysis.psychologicalProfile.confidenceLevel}</p>
+                    <p
+  className={`text-xl md:text-2xl font-bold mb-2 ${
+    analysis.psychologicalProfile.confidenceLevel === "High"
+      ? "text-green-600 dark:text-green-400"
+      : analysis.psychologicalProfile.confidenceLevel === "Medium"
+      ? "text-yellow-600 dark:text-yellow-400"
+      : "text-red-600 dark:text-red-400"
+  }`}
+>
+  {analysis.psychologicalProfile.confidenceLevel}
+</p>
                     <p className="text-xs md:text-sm text-muted-foreground">Self-assurance indicator</p>
                   </div>
                 </motion.div>
