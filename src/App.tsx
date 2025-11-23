@@ -7,8 +7,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+
+// Pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Portfolio from "./pages/Portfolio";
@@ -25,12 +28,15 @@ import Auth from "./pages/Auth";
 import AdminPanel from "./pages/AdminPanel";
 import OnlineClasses from "./pages/OnlineClasses";
 import AboutV3 from "./components/AboutV3";
+
+// Tracking
 import Admin from "./pages/Admin";
 import Driver from "./pages/Driver";
 import Tracking from "./pages/Tracking";
 
-/* NEW: Privacy Policy page */
+// NEW PAGES
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 
@@ -40,28 +46,30 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+
         <BrowserRouter>
           <AuthProvider>
             <Navbar />
+
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path="/online-classes" element={<OnlineClasses />} />
 
-              {/* Tracking System Routes */}
+              {/* Tracking System */}
               <Route path="/admin-tracking" element={<Admin />} />
               <Route path="/driver" element={<Driver />} />
               <Route path="/tracking/:driverId" element={<Tracking />} />
 
-              {/* New Routes */}
+              {/* Other Pages */}
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/start-trial" element={<StartTrial />} />
               <Route path="/tutors" element={<MeetTutors />} />
               <Route path="/about" element={<AboutV3 />} />
 
-              {/* Subject Routes */}
+              {/* Subjects */}
               <Route path="/mathematics" element={<Mathematics />} />
               <Route path="/science" element={<Science />} />
               <Route path="/languages" element={<Languages />} />
@@ -69,12 +77,13 @@ const App = () => (
               <Route path="/diagnostic-quiz" element={<DiagnosticQuiz />} />
               <Route path="/quiz-results" element={<QuizResults />} />
 
-              {/* Privacy Policy */}
+              {/* New Legal Pages */}
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
 
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+
             <Footer />
           </AuthProvider>
         </BrowserRouter>
