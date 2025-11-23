@@ -5,7 +5,7 @@ import Lottie from "lottie-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  // Lottie animation for sparkles
+  // Lottie animation
   const sparkleAnimation = {
     v: "5.7.4",
     fr: 60,
@@ -63,13 +63,14 @@ const Footer = () => {
 
       <div className="container mx-auto px-6 lg:px-16 relative z-10">
         <div className="max-w-7xl mx-auto">
-          {/* Top section - CTA */}
+          
+          {/* Top CTA */}
           <div className="text-center mb-16 pb-16 border-b border-background/10">
             <h3 className="text-3xl md:text-4xl font-bold mb-4">
               Let's build something amazing
             </h3>
             <p className="text-background/70 text-lg mb-8 max-w-2xl mx-auto">
-              Have a project in mind? We'd love to hear about it and discuss how we can bring your vision to life.
+              Have a project in mind? We'd love to hear about it and bring your vision to life.
             </p>
             <Button
               size="lg"
@@ -80,94 +81,58 @@ const Footer = () => {
             </Button>
           </div>
 
+
+          {/* Grid Sections */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            
+            {/* Company Info */}
             <div className="space-y-4 lg:col-span-2">
               <h3 className="text-2xl font-bold">Umbraxis</h3>
               <p className="text-background/70 leading-relaxed max-w-md">
                 Premium web development agency crafting exceptional digital experiences 
                 for forward-thinking brands worldwide.
               </p>
-              
-              {/* Social links */}
+
+              {/* Social Links */}
               <div className="flex gap-3 pt-4">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="rounded-full hover:bg-background/10 hover:scale-110 transition-all"
-                >
+                <Button size="icon" variant="ghost" className="rounded-full hover:bg-background/10 hover:scale-110 transition-all">
                   <Github className="w-5 h-5" />
                 </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="rounded-full hover:bg-background/10 hover:scale-110 transition-all"
-                >
+                <Button size="icon" variant="ghost" className="rounded-full hover:bg-background/10 hover:scale-110 transition-all">
                   <Linkedin className="w-5 h-5" />
                 </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="rounded-full hover:bg-background/10 hover:scale-110 transition-all"
-                >
+                <Button size="icon" variant="ghost" className="rounded-full hover:bg-background/10 hover:scale-110 transition-all">
                   <Twitter className="w-5 h-5" />
                 </Button>
               </div>
             </div>
 
+            {/* Quick Links */}
             <div className="space-y-4">
               <h4 className="font-bold text-lg">Quick Links</h4>
               <ul className="space-y-2 text-background/70">
-                <li>
-                  <Link to="/" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/tutors" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Our Tutors
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/start-trial" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Start Free Trial
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Contact Us
-                  </Link>
-                </li>
+                <li><Link to="/" className="hover:text-background transition-colors inline-block">Home</Link></li>
+                <li><Link to="/tutors" className="hover:text-background transition-colors inline-block">Our Tutors</Link></li>
+                <li><Link to="/start-trial" className="hover:text-background transition-colors inline-block">Start Free Trial</Link></li>
+                <li><Link to="/contact" className="hover:text-background transition-colors inline-block">Contact Us</Link></li>
               </ul>
             </div>
 
+            {/* Subjects */}
             <div className="space-y-4">
               <h4 className="font-bold text-lg">Subjects</h4>
               <ul className="space-y-2 text-background/70">
-                <li>
-                  <Link to="/mathematics" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Mathematics
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/science" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Science
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/languages" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Languages
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/computer-science" className="hover:text-background transition-colors hover:translate-x-1 inline-block">
-                    Computer Science
-                  </Link>
-                </li>
+                <li><Link to="/mathematics" className="hover:text-background transition-colors inline-block">Mathematics</Link></li>
+                <li><Link to="/science" className="hover:text-background transition-colors inline-block">Science</Link></li>
+                <li><Link to="/languages" className="hover:text-background transition-colors inline-block">Languages</Link></li>
+                <li><Link to="/computer-science" className="hover:text-background transition-colors inline-block">Computer Science</Link></li>
               </ul>
             </div>
+
           </div>
 
-          {/* Large Crafted by Umbraxis Card */}
+
+          {/* Crafted by Card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -176,86 +141,64 @@ const Footer = () => {
             className="mt-16 mb-12"
           >
             <div className="relative bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-primary/30 rounded-3xl p-10 overflow-hidden group hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500">
-              {/* Animated background elements */}
               <div className="absolute top-4 right-4 w-20 h-20 opacity-50">
                 <Lottie animationData={sparkleAnimation} loop />
               </div>
               <div className="absolute bottom-4 left-4 w-16 h-16 opacity-40">
                 <Lottie animationData={sparkleAnimation} loop />
               </div>
-              
-              <motion.div
-                initial={{ scale: 0.95 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="text-center relative z-10"
-              >
-                <motion.h2
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
-                  className="text-4xl md:text-5xl font-bold mb-4"
-                >
+
+              <div className="text-center relative z-10">
+                <h2 className="text-4xl md:text-5xl font-bold mb-4">
                   Crafted by <span className="text-primary">Umbraxis</span>
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="text-background/70 text-lg mb-6"
-                >
+                </h2>
+                <p className="text-background/70 text-lg mb-6">
                   Premium web development & digital experiences
-                </motion.p>
-                <motion.a
+                </p>
+                <a
                   href="https://umbraxis.vercel.app"
                   target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all"
                 >
                   Visit Umbraxis
                   <ExternalLink className="w-4 h-4" />
-                </motion.a>
-              </motion.div>
+                </a>
+              </div>
             </div>
           </motion.div>
 
+
+          {/* Bottom Footer Bar */}
           <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-4">
-  <motion.p
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    viewport={{ once: true }}
-    className="text-background/60 text-sm"
-  >
-    © 2025 Umbraxis. All rights reserved.
-  </motion.p>
+            <p className="text-background/60 text-sm">
+              © 2025 Umbraxis. All rights reserved.
+            </p>
 
-  {/* Updated footer links */}
-  <motion.div
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    viewport={{ once: true }}
-    className="flex gap-6 text-sm text-background/60"
-  >
-    <Link
-      to="/privacy-policy"
-      className="hover:text-background transition-colors"
-    >
-      Privacy Policy
-    </Link>
+            <div className="flex gap-6 text-sm text-background/60">
+              <Link to="/privacy-policy" className="hover:text-background transition-colors">
+                Privacy Policy
+              </Link>
+              <Link to="/terms-of-service" className="hover:text-background transition-colors">
+                Terms of Service
+              </Link>
+            </div>
+          </div>
 
-    <Link
-      to="/terms-of-service"
-      className="hover:text-background transition-colors"
-    >
-      Terms of Service
-    </Link>
-  </motion.div>
-</div>
+
+          {/* Made by Umbraxis */}
+          <div className="text-center mt-8">
+            <a
+              href="https://umbraxis.vercel.app"
+              target="_blank"
+              className="text-background/50 hover:text-background text-sm transition-colors inline-flex items-center gap-1 group"
+            >
+              Made with ❤️ by 
+              <span className="text-primary font-semibold group-hover:underline">Umbraxis</span>
+              <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </a>
+          </div>
+
+        </div>
       </div>
     </footer>
   );
