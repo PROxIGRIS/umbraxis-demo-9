@@ -2,99 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Dark Futuristic Purple Theme – Umbraxis
+   All colors in HSL (as required)
 */
 
 @layer base {
   :root {
-    --background: 35 45% 97%;
-    --foreground: 0 0% 5%;
+    /* Backgrounds */
+    --background: 250 20% 6%;       /* Deep midnight purple */
+    --foreground: 0 0% 98%;         /* Near-white text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 5%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 5%;
-
-    --primary: 16 100% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 35 100% 97%;
-    --secondary-foreground: 0 0% 5%;
-
-    --muted: 35 30% 92%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 16 100% 60%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 35 20% 88%;
-    --input: 35 20% 88%;
-    --ring: 16 100% 60%;
-
-    --radius: 1rem;
-    
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-elegant: 0 10px 40px -15px rgba(255, 107, 53, 0.15);
-    --gradient-orange: linear-gradient(135deg, hsl(16 100% 70%), hsl(16 100% 60%));
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 20 20% 8%;
-    --foreground: 0 0% 98%;
-
-    --card: 20 20% 10%;
+    --card: 250 25% 10%;            /* Glassy dark surface */
     --card-foreground: 0 0% 98%;
 
-    --popover: 20 20% 8%;
+    --popover: 250 25% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 16 100% 60%;
+    /* Primary – Neon Purple */
+    --primary: 265 90% 63%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 20 20% 15%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary – Mint Green Glow */
+    --secondary: 155 80% 65%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 20 20% 18%;
-    --muted-foreground: 0 0% 60%;
+    /* Muted / Subtle surfaces */
+    --muted: 250 15% 14%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 16 100% 55%;
+    --accent: 265 90% 63%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    /* Destructive */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 20 20% 20%;
-    --input: 20 20% 20%;
-    --ring: 16 100% 60%;
-    --sidebar-background: 20 20% 8%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 16 100% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 20 20% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 20 20% 18%;
-    --sidebar-ring: 16 100% 60%;
+    /* Borders / Inputs / Rings */
+    --border: 250 15% 18%;
+    --input: 250 15% 18%;
+    --ring: 265 90% 63%;
+
+    /* Radius */
+    --radius: 1rem;
+
+    /* Custom Effects */
+    --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-elegant: 0 20px 40px -10px rgba(125, 76, 255, 0.20);
+
+    /* Glow gradients */
+    --gradient-purple: linear-gradient(
+      135deg,
+      hsl(265 90% 65%),
+      hsl(265 80% 55%)
+    );
+
+    --gradient-mint: linear-gradient(
+      135deg,
+      hsl(155 80% 70%),
+      hsl(155 70% 60%)
+    );
+  }
+
+  /* Optional: Dark mode == same theme (so it never turns orange/light) */
+  .dark {
+    --background: 250 20% 6%;
+    --foreground: 0 0% 98%;
+    --card: 250 25% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 250 25% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 265 90% 63%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 155 80% 65%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 250 15% 14%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 265 90% 63%;
+    --accent-foreground: 0 0% 100%;
+    --border: 250 15% 18%;
+    --input: 250 15% 18%;
+    --ring: 265 90% 63%;
   }
 }
 
@@ -106,7 +93,7 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-inter antialiased;
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
