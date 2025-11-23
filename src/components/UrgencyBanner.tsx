@@ -30,7 +30,7 @@ export const UrgencyBanner = () => {
   const LS_SHOWN_KEY = "urgencyBanner:shown";
   const [bannerContent, setBannerContent] = useState<BannerContent | null>(null);
 
-  const [isVisible, setIsVisible] = useState(() => {
+  const [isVisible, setIsVisible] = useState(false);
     try {
       return typeof window !== "undefined" && !localStorage.getItem(LS_SHOWN_KEY);
     } catch {
