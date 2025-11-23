@@ -225,48 +225,37 @@ const Footer = () => {
           </motion.div>
 
           <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-4">
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-background/60 text-sm"
-            >
-              © 2025 Umbraxis. All rights reserved.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="flex gap-6 text-sm text-background/60"
-            >
-              <a href="#" className="hover:text-background transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-background transition-colors">
-                Terms of Service
-              </a>
-            </motion.div>
-          </div>
+  <motion.p
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true }}
+    className="text-background/60 text-sm"
+  >
+    © 2025 Umbraxis. All rights reserved.
+  </motion.p>
 
-          {/* Made by Umbraxis link */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-center mt-8"
-          >
-            <a
-              href="https://umbraxis.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-background/50 hover:text-background text-sm transition-colors inline-flex items-center gap-1 group"
-            >
-              Made with ❤️ by <span className="text-primary font-semibold group-hover:underline">Umbraxis</span>
-              <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </a>
-          </motion.div>
-        </div>
+  {/* Updated footer links */}
+  <motion.div
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true }}
+    className="flex gap-6 text-sm text-background/60"
+  >
+    <Link
+      to="/privacy-policy"
+      className="hover:text-background transition-colors"
+    >
+      Privacy Policy
+    </Link>
+
+    <Link
+      to="/terms-of-service"
+      className="hover:text-background transition-colors"
+    >
+      Terms of Service
+    </Link>
+  </motion.div>
+</div>
       </div>
     </footer>
   );
