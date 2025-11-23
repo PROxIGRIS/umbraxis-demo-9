@@ -1,3 +1,4 @@
+// src/App.tsx
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -28,6 +29,9 @@ import Admin from "./pages/Admin";
 import Driver from "./pages/Driver";
 import Tracking from "./pages/Tracking";
 
+/* NEW: Privacy Policy page */
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,16 +48,19 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path="/online-classes" element={<OnlineClasses />} />
+
               {/* Tracking System Routes */}
               <Route path="/admin-tracking" element={<Admin />} />
               <Route path="/driver" element={<Driver />} />
               <Route path="/tracking/:driverId" element={<Tracking />} />
+
               {/* New Routes */}
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/start-trial" element={<StartTrial />} />
               <Route path="/tutors" element={<MeetTutors />} />
               <Route path="/about" element={<AboutV3 />} />
+
               {/* Subject Routes */}
               <Route path="/mathematics" element={<Mathematics />} />
               <Route path="/science" element={<Science />} />
@@ -61,6 +68,10 @@ const App = () => (
               <Route path="/computer-science" element={<ComputerScience />} />
               <Route path="/diagnostic-quiz" element={<DiagnosticQuiz />} />
               <Route path="/quiz-results" element={<QuizResults />} />
+
+              {/* Privacy Policy */}
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
