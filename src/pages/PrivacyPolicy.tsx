@@ -1,19 +1,20 @@
-import React, { useEffect, useState, useRef } from "react";
+// src/pages/PrivacyPolicy.tsx
+import React, { useEffect, useState } from "react";
 import Lottie from "lottie-react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DownloadCloud, ShieldCheck, Clock, Trash2, Mail, Info, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 /**
- * PrivacyPolicy.tsx
- * Premium Privacy Policy page component for a Science Exhibition website/app.
+ * Umbraxis Privacy Policy Page
+ * - Hero-inspired layout (based on provided Hero component)
+ * - No video included
+ * - Clear policy sections, download buttons, consent toggle
  *
- * NOTE: This is a template and should be reviewed by legal counsel for compliance
- * with local laws (GDPR, CCPA, etc.) before going live.
+ * Replace download hrefs with your public/pdf asset locations.
  */
 
-/* Simple decorative animation (tiny spiral), re-using style from AboutV2 inspiration */
 const spiralAnimation = {
   v: "5.7.4",
   fr: 60,
@@ -43,7 +44,7 @@ const spiralAnimation = {
           ty: "gr",
           it: [
             { ty: "el", p: { a: 0, k: [50, 0] }, s: { a: 0, k: [26, 26] } },
-            { ty: "fl", c: { a: 0, k: [0.11, 0.60, 0.99, 1] }, o: { a: 0, k: 100 } },
+            { ty: "fl", c: { a: 0, k: [1, 0.42, 0.33, 1] }, o: { a: 0, k: 100 } },
           ],
         },
       ],
@@ -54,420 +55,318 @@ const spiralAnimation = {
   ],
 };
 
-const POLICY_LAST_UPDATED = "2025-11-20";
-
 const PrivacyPolicy: React.FC = () => {
-  const [showPrefs, setShowPrefs] = useState(false);
-  const [consentGiven, setConsentGiven] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem("exhibit_privacy_consent") === "true";
-    } catch {
-      return false;
-    }
-  });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [consent, setConsent] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>("data");
 
-  const [prefs, setPrefs] = useState({
-    analytics: true,
-    location: false,
-    marketing: false,
-    personalization: true,
-  });
-
-  // sync prefs from storage (if any)
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("exhibit_privacy_prefs");
-      if (raw) setPrefs(JSON.parse(raw));
-    } catch (e) {
-      // noop
+    // only attach if device supports hover to preserve mobile perf
+    if (window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+      const onMove = (e: MouseEvent) => setMousePosition({ x: e.clientX, y: e.clientY });
+      window.addEventListener("mousemove", onMove);
+      return () => window.removeEventListener("mousemove", onMove);
     }
   }, []);
 
-  function acceptAll() {
-    setConsentGiven(true);
-    localStorage.setItem("exhibit_privacy_consent", "true");
-    localStorage.setItem("exhibit_privacy_prefs", JSON.stringify({
-      analytics: true,
-      location: true,
-      marketing: true,
-      personalization: true,
-    }));
-    setPrefs({ analytics: true, location: true, marketing: true, personalization: true });
-  }
-
-  function savePrefs() {
-    setConsentGiven(true);
-    localStorage.setItem("exhibit_privacy_consent", "true");
-    localStorage.setItem("exhibit_privacy_prefs", JSON.stringify(prefs));
-    setShowPrefs(false);
-  }
-
-  function revokeConsent() {
-    setConsentGiven(false);
-    localStorage.removeItem("exhibit_privacy_consent");
-    localStorage.removeItem("exhibit_privacy_prefs");
-    // implement any runtime cleanup e.g. stop analytics SDK, revoke tokens, etc.
-  }
-
-  const downloadRef = useRef<HTMLAnchorElement | null>(null);
+  const toggleExpand = (id: string) => setExpanded((cur) => (cur === id ? null : id));
 
   return (
-    <section className="min-h-screen py-12 bg-gradient-to-br from-background via-secondary to-background">
-      {/* floating decorative blobs */}
-      <div className="absolute -z-10 opacity-10 blur-3xl bg-primary/20 w-96 h-96 rounded-full left-4 top-20 pointer-events-none" />
-      <div className="container mx-auto px-6 lg:px-16">
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* LEFT: Intro */}
-          <div className="lg:col-span-1 space-y-6">
-            <Badge variant="orange" className="gap-2 inline-flex items-center">
-              <ShieldCheck className="w-4 h-4" />
-              Privacy & Safety
-            </Badge>
+    <section className="relative min-h-screen flex items-start overflow-hidden bg-gradient-to-br from-background via-secondary to-background py-16">
+      {/* Interactive cursor glow */}
+      <div
+        className="fixed w-96 h-96 rounded-full bg-primary/6 blur-3xl pointer-events-none transition-all duration-300 ease-out -z-10"
+        style={{ left: mousePosition.x - 192, top: mousePosition.y - 192 }}
+        aria-hidden
+      />
 
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
-              Privacy Policy
-            </h1>
-
-            <p className="text-sm text-foreground/80 leading-relaxed">
-              This policy explains how <strong>Science Exhibit</strong> collects, uses,
-              stores, and protects personal data related to visitors, participants,
-              volunteers, sponsors, and staff. We prioritize transparency and data-minimising design.
-            </p>
-
-            <div className="flex gap-3 flex-wrap">
-              <a
-                href="/privacy-policy.pdf"
-                ref={downloadRef}
-                className="inline-flex items-center gap-2 text-sm bg-primary text-white px-4 py-2 rounded-full shadow hover:scale-105 transition"
-                download
-              >
-                <DownloadCloud className="w-4 h-4" /> Download PDF
-              </a>
-
-              <Button
-                onClick={() => setShowPrefs(true)}
-                variant="outline"
-                className="text-sm px-4 py-2 rounded-full"
-              >
-                Manage Preferences
-              </Button>
-            </div>
-
-            <div className="rounded-xl p-4 bg-background/60 border border-primary/10 text-sm">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-primary mt-1" />
-                <div>
-                  <div className="font-semibold">Last updated</div>
-                  <div className="text-xs text-muted-foreground">{POLICY_LAST_UPDATED}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT: Policy content */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow">
-              <h2 className="text-xl font-semibold mb-4">Quick summary</h2>
-              <ul className="list-disc pl-5 text-sm space-y-2 text-foreground/85">
-                <li>We collect only what is necessary to run the exhibition and keep people safe.</li>
-                <li>You control what we use — manage preferences at any time.</li>
-                <li>We never sell personal data. We may share limited data with trusted third parties to provide core services (e.g. ticketing, venue security).</li>
-                <li>Children under 16: we require parental consent for registration or data collection.</li>
-              </ul>
-            </div>
-
-            {/* What we collect */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">1. What we collect</h3>
-              <p className="text-sm text-foreground/85">
-                We categorise data and collect the minimum required for each purpose:
-              </p>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="font-semibold">Identity & contact</div>
-                  <div className="text-sm text-foreground/80">name, email, phone, emergency contact, ticket ID.</div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="font-semibold">Device & usage</div>
-                  <div className="text-sm text-foreground/80">IP address, device model, app version, session logs, analytics (if enabled).</div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="font-semibold">Location & safety</div>
-                  <div className="text-sm text-foreground/80">live GPS during guided experiences if you opt-in, venue zone check-ins for safety/evacuation.</div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="font-semibold">Media</div>
-                  <div className="text-sm text-foreground/80">photos/videos from public spaces (we’ll post signage and seek consent where recording is used publicly).</div>
-                </div>
-              </div>
-            </div>
-
-            {/* How we use */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">2. How we use your data</h3>
-              <ul className="list-disc pl-5 text-sm space-y-2">
-                <li><strong>Event operations:</strong> tickets, check-in, queues, staff coordination, crowd safety.</li>
-                <li><strong>Communications:</strong> confirmations, updates, emergency alerts.</li>
-                <li><strong>Improvements:</strong> product analytics and quality improvements (only if analytics consented).</li>
-                <li><strong>Legal & safety:</strong> to comply with laws, respond to incidents, and cooperate with authorities.</li>
-              </ul>
-            </div>
-
-            {/* Legal basis & retention */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">3. Legal basis & retention</h3>
-              <p className="text-sm text-foreground/85">
-                Where applicable, we rely on legitimate interest, contract performance (tickets/registrations), consent, or legal obligation as a basis for processing. Retention is minimised:
-              </p>
-
-              <div className="grid md:grid-cols-3 gap-6 pt-3">
-                <div className="p-4 rounded-lg bg-background/50 border">
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-primary" />
-                    <div>
-                      <div className="font-semibold">Ticket data</div>
-                      <div className="text-xs text-muted-foreground">Kept for 3 years for audit & support</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-background/50 border">
-                  <div className="flex items-center gap-3">
-                    <Trash2 className="w-5 h-5 text-primary" />
-                    <div>
-                      <div className="font-semibold">Analytics logs</div>
-                      <div className="text-xs text-muted-foreground">Anonymised within 90 days</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-background/50 border">
-                  <div className="flex items-center gap-3">
-                    <ShieldCheck className="w-5 h-5 text-primary" />
-                    <div>
-                      <div className="font-semibold">Emergency & CCTV</div>
-                      <div className="text-xs text-muted-foreground">Held per local law; limited access</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Cookies */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">4. Cookies & similar technologies</h3>
-              <p className="text-sm text-foreground/85">
-                We use cookies for essential site functionality and (with consent) for analytics and personalization. Available categories:
-              </p>
-
-              <ul className="list-disc pl-5 text-sm space-y-2">
-                <li><strong>Strictly necessary:</strong> required for the site to work.</li>
-                <li><strong>Analytics:</strong> anonymous usage data to improve the experience.</li>
-                <li><strong>Marketing:</strong> third-party features only with consent.</li>
-              </ul>
-            </div>
-
-            {/* Sharing & third parties */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">5. Sharing & third parties</h3>
-              <p className="text-sm text-foreground/85">
-                We never sell your personal data. We may share necessary information with:
-              </p>
-
-              <ul className="list-disc pl-5 text-sm space-y-2">
-                <li>Payment processors (ticket payments)</li>
-                <li>Ticketing & access control providers</li>
-                <li>Venue safety teams and emergency services (when required)</li>
-                <li>Third-party analytics if you opt in</li>
-              </ul>
-            </div>
-
-            {/* Rights & contact */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">6. Your rights & contact</h3>
-              <p className="text-sm text-foreground/85">
-                You have rights to access, correct, delete, or restrict processing of your personal data. To exercise your rights or raise a privacy concern, contact:
-              </p>
-
-              <div className="mt-4 grid md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-background/50 border flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-primary mt-1" />
-                  <div>
-                    <div className="font-semibold">Data Protection Team</div>
-                    <div className="text-xs text-muted-foreground">privacy@scienceexhibit.org</div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-background/50 border flex items-start gap-3">
-                  <div className="font-semibold">Postal</div>
-                  <div className="text-xs text-muted-foreground">Science Exhibit, 1234 Museum Ave, City, Country</div>
-                </div>
-              </div>
-
-              <p className="text-xs text-muted-foreground mt-3">If you are in the EU/UK you may also lodge a complaint with your supervisory authority.</p>
-            </div>
-
-            {/* Children */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">7. Children</h3>
-              <p className="text-sm text-foreground/85">
-                We do not knowingly collect personal data from children under 16 without parental consent. If you believe we have collected data about a child without consent, contact us to request deletion.
-              </p>
-            </div>
-
-            {/* Security */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">8. Security & data minimisation</h3>
-              <p className="text-sm text-foreground/85">
-                We use standard administrative, technical, and physical safeguards. Access to personal data is restricted to authorised personnel. We continuously improve our security posture, but no system can be 100% secure — if a breach occurs we will notify affected parties in accordance with applicable law.
-              </p>
-            </div>
-
-            {/* Changes */}
-            <div className="rounded-2xl p-8 bg-background/60 border border-primary/10 shadow space-y-4">
-              <h3 className="text-lg font-semibold">9. Changes to this policy</h3>
-              <p className="text-sm text-foreground/85">
-                We may update this policy to reflect operational or legal changes. We’ll publish the revised date at the top and notify registered users for material changes.
-              </p>
-            </div>
-
-            <footer className="mt-6 text-xs text-muted-foreground">
-              <div>© {new Date().getFullYear()} Science Exhibit. All rights reserved.</div>
-              <div className="mt-2">This template is a starting point. Review by legal counsel is recommended before publishing.</div>
-            </footer>
-          </div>
-        </div>
-      </div>
-
-      {/* Consent Banner */}
-      {!consentGiven && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[min(95%,900px)] bg-background/95 border border-primary/20 rounded-xl p-4 shadow-lg flex flex-col md:flex-row gap-4 items-center">
-          <div className="flex-1">
-            <div className="flex items-start gap-3">
-              <ShieldCheck className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="font-semibold">We care about your privacy</div>
-                <div className="text-sm text-foreground/80">We use cookies and small data to run core features. Manage preferences or accept all to continue.</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <Button onClick={() => setShowPrefs(true)} variant="outline" className="px-4 py-2 rounded-full">
-              Manage
-            </Button>
-            <Button onClick={acceptAll} className="px-6 py-2 rounded-full">
-              Accept all
-            </Button>
-            <button onClick={revokeConsent} className="p-2 rounded-full text-sm text-muted-foreground">
-              Decline
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Preferences Modal */}
-      {showPrefs && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowPrefs(false)} />
-          <div className="relative max-w-2xl w-full rounded-2xl bg-background/90 border p-6 shadow-2xl z-10">
-            <div className="flex items-start justify-between">
-              <div>
-                <h4 className="text-lg font-semibold">Manage privacy preferences</h4>
-                <p className="text-xs text-muted-foreground">Toggle categories to customise what we process. You can change this later in Settings.</p>
-              </div>
-              <button onClick={() => setShowPrefs(false)} className="p-2 rounded-full bg-background/50">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="mt-6 space-y-4">
-              <PrefRow
-                label="Essential / Site functionality"
-                description="Required for core site features: security, accessibility, and ticketing."
-                enabled={true}
-                disabled
-                onToggle={() => {}}
-              />
-              <PrefRow
-                label="Analytics"
-                description="Anonymous usage data to improve exhibits and flow."
-                enabled={prefs.analytics}
-                onToggle={() => setPrefs(prev => ({ ...prev, analytics: !prev.analytics }))}
-              />
-              <PrefRow
-                label="Location (optional)"
-                description="Live location during guided experiences (only with explicit opt-in)."
-                enabled={prefs.location}
-                onToggle={() => setPrefs(prev => ({ ...prev, location: !prev.location }))}
-              />
-              <PrefRow
-                label="Marketing & communications"
-                description="Event updates, offers, partner promotions (only if you opt in)."
-                enabled={prefs.marketing}
-                onToggle={() => setPrefs(prev => ({ ...prev, marketing: !prev.marketing }))}
-              />
-              <PrefRow
-                label="Personalization"
-                description="Personalised content & recommendations."
-                enabled={prefs.personalization}
-                onToggle={() => setPrefs(prev => ({ ...prev, personalization: !prev.personalization }))}
-              />
-            </div>
-
-            <div className="mt-6 flex gap-3 justify-end">
-              <Button variant="outline" onClick={() => setShowPrefs(false)}>Cancel</Button>
-              <Button onClick={savePrefs}>Save preferences</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* decorative animation bottom-right */}
-      <div className="fixed bottom-8 right-8 w-36 h-36 opacity-25 pointer-events-none">
+      {/* Decorative Lottie blobs */}
+      <div className="absolute top-20 left-10 w-40 h-40 opacity-30 pointer-events-none animate-pulse -z-10">
         <Lottie animationData={spiralAnimation} loop />
       </div>
+      <div className="absolute bottom-20 right-20 w-48 h-48 opacity-24 pointer-events-none -z-10">
+        <Lottie animationData={spiralAnimation} loop />
+      </div>
+
+      <div className="container mx-auto px-6 lg:px-16">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          {/* Left Column: Hero-style header + summary */}
+          <div className="space-y-8 relative z-10">
+            <Badge variant="orange" className="gap-2 inline-flex items-center">
+              <Sparkles className="w-4 h-4" />
+              Umbraxis — Privacy & Data
+            </Badge>
+
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
+                Umbraxis Privacy Policy
+              </h1>
+              <p className="text-lg text-foreground/80 max-w-xl leading-relaxed">
+                We respect your privacy. This page explains how Umbraxis collects, uses, shares,
+                and protects personal information in the Umbraxis learning and tracking systems.
+                Read carefully to understand what we collect and how to control your data.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a
+                href="/downloads/umbraxis-privacy.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <Button size="lg" className="w-full bg-primary px-6 py-3 rounded-full shadow-md hover:shadow-lg">
+                  Download Policy
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </a>
+
+              <a
+                href="/downloads/umbraxis-roadmap.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <Button size="lg" variant="outline" className="w-full px-6 py-3 rounded-full">
+                  Download Roadmap
+                </Button>
+              </a>
+            </div>
+
+            <div className="grid grid-cols-3 gap-8 pt-6 max-w-md">
+              <div className="space-y-1">
+                <div className="text-2xl md:text-3xl font-bold text-primary">100%</div>
+                <div className="text-sm text-muted-foreground">Transparency Goal</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-2xl md:text-3xl font-bold text-primary">Realtime</div>
+                <div className="text-sm text-muted-foreground">Tracking Options</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-2xl md:text-3xl font-bold text-primary">GDPR-ready</div>
+                <div className="text-sm text-muted-foreground">Data Controls</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Policy content card */}
+          <div className="relative z-10">
+            <div className="p-6 rounded-2xl bg-background/70 border border-primary/10 shadow-lg space-y-6">
+              <h2 className="text-xl font-semibold">Summary</h2>
+              <p className="text-sm text-foreground/85 leading-relaxed">
+                Umbraxis collects only the data necessary to provide tutoring, diagnostics,
+                and optional realtime tracking (for TrackFlow). You remain in control:
+                parents can view driver locations only with explicit access, students can
+                download their results, and admins have role-based access.
+              </p>
+
+              <div className="flex items-center justify-between gap-4">
+                <label className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="w-4 h-4 rounded border-muted-foreground"
+                    aria-label="I consent to this privacy policy"
+                  />
+                  <span className="text-sm text-foreground/85">I acknowledge and accept this policy</span>
+                </label>
+
+                <div className="flex gap-3">
+                  <Button size="sm" variant="ghost" asChild>
+                    <Link to="/contact">Contact Us</Link>
+                  </Button>
+                  <Button size="sm" disabled={!consent} className="bg-primary">
+                    Confirm
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Accordion style details */}
+            <div className="mt-6 space-y-4">
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("data")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "data"}
+                >
+                  <h3 className="font-semibold">1. Data We Collect</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "data" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "data" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <p>
+                      <strong>Account info:</strong> name, email, phone (when provided), role.
+                    </p>
+                    <p>
+                      <strong>Assessment data:</strong> quiz answers, performance summaries, downloadable PDF reports.
+                    </p>
+                    <p>
+                      <strong>Realtime location (optional):</strong> driver lat/long, speed, accuracy, timestamp. Driver location is only shared when the driver enables tracking.
+                    </p>
+                  </div>
+                )}
+              </section>
+
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("use")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "use"}
+                >
+                  <h3 className="font-semibold">2. How We Use Data</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "use" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "use" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <ul className="list-disc pl-5">
+                      <li>Provide and improve core services (quizzes, tutor matching, dashboards).</li>
+                      <li>Generate personalized learning roadmaps and downloadable PDF results.</li>
+                      <li>Support optional TrackFlow realtime features — only when drivers opt in.</li>
+                      <li>Security, analytics, and fraud prevention.</li>
+                    </ul>
+                  </div>
+                )}
+              </section>
+
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("share")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "share"}
+                >
+                  <h3 className="font-semibold">3. Sharing & Third Parties</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "share" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "share" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <p>
+                      We do not sell personal data. We share minimal necessary information with:
+                    </p>
+                    <ul className="list-disc pl-5">
+                      <li>Payment processors (if/when payments occur)</li>
+                      <li>Cloud infrastructure (host, database, auth) under contract</li>
+                      <li>Third-party analytics (only aggregated & anonymized)</li>
+                    </ul>
+                    <p className="mt-2">Driver location streams are visible only to parents/admins with permission.</p>
+                  </div>
+                )}
+              </section>
+
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("retention")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "retention"}
+                >
+                  <h3 className="font-semibold">4. Retention & Deletion</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "retention" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "retention" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <p>We retain data only for as long as necessary to provide services and to comply with legal obligations. Users can request deletion via Contact.</p>
+                    <p className="text-xs text-muted-foreground">Retention windows (example): assessment reports 5 years, logs 90 days, backup retention per policy.</p>
+                  </div>
+                )}
+              </section>
+
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("security")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "security"}
+                >
+                  <h3 className="font-semibold">5. Security</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "security" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "security" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <p>We use industry-standard encryption (TLS) in transit and secure database controls at rest. No client-side keys are embedded in public builds; secrets are stored server-side.</p>
+                    <p className="text-xs text-muted-foreground">Important: keep your password private. Report any suspected breach immediately.</p>
+                  </div>
+                )}
+              </section>
+
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("rights")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "rights"}
+                >
+                  <h3 className="font-semibold">6. Your Rights & Controls</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "rights" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "rights" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <ul className="list-disc pl-5">
+                      <li>Access: request a copy of your data.</li>
+                      <li>Rectification: ask us to correct inaccurate data.</li>
+                      <li>Deletion: request removal of personal data where applicable.</li>
+                      <li>Portability: export your assessment reports as PDFs.</li>
+                    </ul>
+                    <p className="mt-2">To exercise rights, contact: <strong>privacy@umbraxis.com</strong></p>
+                  </div>
+                )}
+              </section>
+
+              <section className="bg-background/60 border border-primary/8 rounded-2xl p-4 shadow-sm">
+                <header
+                  className="flex items-center justify-between cursor-pointer"
+                  role="button"
+                  onClick={() => toggleExpand("contact")}
+                  tabIndex={0}
+                  aria-expanded={expanded === "contact"}
+                >
+                  <h3 className="font-semibold">7. Contact & Updates</h3>
+                  <div className="text-xs text-muted-foreground">{expanded === "contact" ? "Hide" : "Show"}</div>
+                </header>
+                {expanded === "contact" && (
+                  <div className="mt-3 text-sm text-foreground/85 space-y-2">
+                    <p>If you have questions or want to request data access/deletion, email: <strong>privacy@umbraxis.com</strong>.</p>
+                    <p>We may update this policy from time to time. Material changes will be posted on this page with an updated effective date.</p>
+                  </div>
+                )}
+              </section>
+            </div>
+
+            {/* bottom CTA */}
+            <div className="mt-6 p-4 rounded-xl bg-background/60 border border-primary/8 flex items-center justify-between gap-4">
+              <div>
+                <div className="text-sm font-semibold">Need help with data requests?</div>
+                <div className="text-xs text-muted-foreground">Our privacy team aims to respond within 5 business days.</div>
+              </div>
+              <div className="flex gap-3">
+                <a href="mailto:privacy@umbraxis.com">
+                  <Button size="sm" className="bg-primary">Email Privacy Team</Button>
+                </a>
+                <Link to="/">
+                  <Button size="sm" variant="ghost">Return Home</Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        .animate-gradient { background-size: 200% 200%; animation: gradientMove 6s linear infinite; }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+      `}</style>
     </section>
   );
 };
 
 export default PrivacyPolicy;
-
-/* small reusable preference row component (kept here for single-file convenience) */
-type PrefRowProps = {
-  label: string;
-  description: string;
-  enabled: boolean;
-  onToggle: () => void;
-  disabled?: boolean;
-};
-
-const PrefRow: React.FC<PrefRowProps> = ({ label, description, enabled, onToggle, disabled }) => {
-  return (
-    <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border">
-      <div>
-        <div className="font-medium">{label}</div>
-        <div className="text-xs text-muted-foreground">{description}</div>
-      </div>
-
-      <div>
-        <label className={`relative inline-flex items-center cursor-pointer ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}>
-          <input
-            readOnly
-            type="checkbox"
-            checked={enabled}
-            onChange={onToggle}
-            className="sr-only peer"
-            disabled={disabled}
-          />
-          <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer-checked:bg-primary ${disabled ? "opacity-50" : ""} transition`} />
-          <div className={`absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transform peer-checked:translate-x-5 transition`} />
-        </label>
-      </div>
-    </div>
-  );
-};
