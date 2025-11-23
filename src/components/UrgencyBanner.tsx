@@ -31,12 +31,7 @@ export const UrgencyBanner = () => {
   const [bannerContent, setBannerContent] = useState<BannerContent | null>(null);
 
   const [isVisible, setIsVisible] = useState(false);
-    try {
-      return typeof window !== "undefined" && !localStorage.getItem(LS_SHOWN_KEY);
-    } catch {
-      return true;
-    }
-  });
+    
 
   // Fetch banner content from database
   useEffect(() => {
